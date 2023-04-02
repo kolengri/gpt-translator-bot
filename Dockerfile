@@ -8,7 +8,7 @@ ENV NODE_ENV=production
 WORKDIR /app
 
 # Copy package.json and package-lock.json files to the container
-COPY package*.json ./
+COPY * ./
 
 # Install dependencies
 RUN npm ci --production
