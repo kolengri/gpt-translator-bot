@@ -14,7 +14,8 @@
     "test:watch": "jest --watch --coverage",
     "docker:build": "docker build -t gpt-translator-bot .",
     "docker:run": "docker run -p 8000:8000 gpt-translator-bot",
-    "docker:up": "docker-compose up -d"
+    "docker:up": "docker-compose up -d",
+    "restart": "git pull origin && sudo docker-compose up --build --force-recreate -d"
   },
   "husky": {
     "hooks": {
