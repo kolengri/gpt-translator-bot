@@ -1,14 +1,21 @@
 {
   "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
-    "module": "esnext",
     "moduleResolution": "node",
     "allowJs": true,
     "checkJs": false,
-    "outDir": "dist",
-    "rootDir": "",
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "target": "es6",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "module": "commonjs",
+    "lib": ["es2019", "esnext"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src", "types"],
   "exclude": ["node_modules", "dist"],
