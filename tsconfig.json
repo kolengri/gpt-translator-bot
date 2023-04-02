@@ -1,7 +1,17 @@
 {
   "extends": "@tsconfig/recommended/tsconfig.json",
-  "include": ["src", "types"],
   "compilerOptions": {
     "module": "esnext",
-  }
+    "moduleResolution": "node",
+    "allowJs": true,
+    "checkJs": false,
+    "outDir": "dist",
+    "rootDir": "",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src", "types"],
+  "exclude": ["node_modules", "dist"],
+
+  "files": ["types/process-env.d.ts"]
 }
