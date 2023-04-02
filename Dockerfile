@@ -11,7 +11,7 @@ WORKDIR /app
 COPY * ./
 
 # Install dependencies
-RUN npm ci --production
+RUN yarn
 
 # Copy the source code to the container
 COPY . .
@@ -20,4 +20,4 @@ COPY . .
 EXPOSE 8000
 
 # Start the bot using the start:prod script
-CMD ["npm", "run", "start:prod"]
+CMD ["yarn", "run", "start:prod"]
