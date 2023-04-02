@@ -1,7 +1,8 @@
-import { createOpenAIClient } from '../createOpenAIClient';
+import {createOpenAIClient} from '../createOpenAIClient';
 
 describe(createOpenAIClient.name, () => {
   it('should return an OpenAIApi instance', () => {
+    process.env.OPENAI_API_KEY = 'test';
     const openAIClient = createOpenAIClient();
     expect(openAIClient).toBeDefined();
   });

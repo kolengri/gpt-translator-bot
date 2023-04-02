@@ -1,7 +1,8 @@
-import { createTelegramBotClient } from '../createTelegramBotClient';
+import {createTelegramBotClient} from '../createTelegramBotClient';
 
 describe(createTelegramBotClient.name, () => {
   it('should return a Telegraf instance', () => {
+    process.env.TELEGRAM_BOT_TOKEN = 'test';
     const telegramBotClient = createTelegramBotClient();
     expect(telegramBotClient).toBeDefined();
   });
