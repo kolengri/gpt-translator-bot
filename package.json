@@ -29,7 +29,6 @@
     "@size-limit/preset-small-lib": "^8.2.4",
     "@tsconfig/recommended": "^1.0.2",
     "@types/jest": "^29.5.0",
-    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "husky": "^8.0.3",
     "jest": "^29.5.0",
@@ -41,6 +40,7 @@
     "typescript": "^5.0.3"
   },
   "dependencies": {
+    "cross-env": "^7.0.3",
     "openai": "^3.2.1",
     "telegraf": "^4.12.2",
     "ts-node": "^10.9.1",
