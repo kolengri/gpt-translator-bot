@@ -10,6 +10,9 @@ const config: Config = {
   coverageDirectory: 'coverage',
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'cobertura'],
   collectCoverageFrom: ['src/**/*.ts'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
 };
 
 export default config;

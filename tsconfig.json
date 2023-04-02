@@ -10,15 +10,18 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
+    "baseUrl": ".",
     "strictNullChecks": true,
     "module": "commonjs",
     "lib": ["es2019", "esnext"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src", "types"],
   "exclude": ["node_modules", "dist"],
-
-  "files": ["types/process-env.d.ts"]
+  "files": ["types/process-env.d.ts"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
 }
