@@ -21,4 +21,4 @@ COPY . .
 EXPOSE 8000
 
 # Start the bot using the start:prod script
-RUN yarn start:prod
+CMD ["yarn", "start:prod"]
