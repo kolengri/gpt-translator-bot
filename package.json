@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "echo 'No linting configured'",
     "start": "cross-env NODE_ENV=development tsnd -r tsconfig-paths/register --inspect --respawn -T --cls --ignore-watch node_modules index.ts",
-    "start:prod": "cross-env NODE_ENV=production ts-node -T index.ts",
+    "start:prod": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register -T index.ts",
     "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch --coverage",

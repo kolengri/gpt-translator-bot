@@ -8,7 +8,8 @@ ENV NODE_ENV=production
 WORKDIR /app
 
 # Copy package.json and package-lock.json files to the container
-COPY * ./
+COPY package.json ./
+COPY yarn.lock ./
 
 # Install dependencies
 RUN yarn
@@ -20,4 +21,4 @@ COPY . .
 EXPOSE 8000
 
 # Start the bot using the start:prod script
-CMD ["yarn", "run", "start:prod"]
+RUN yarn start:prod

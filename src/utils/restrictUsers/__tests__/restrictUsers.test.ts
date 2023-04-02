@@ -18,6 +18,7 @@ describe('restrictUsers', () => {
   });
 
   it('should call next if user is allowed', async () => {
+    process.env.ALLOWED_USER_IDS = JSON.stringify([549067334]);
     // Set up mock user ID that is allowed
     ctx.message.from.id = 549067334;
 
@@ -29,6 +30,8 @@ describe('restrictUsers', () => {
   });
 
   it('should reply with an error message if user is not allowed', async () => {
+    process.env.ALLOWED_USER_IDS = JSON.stringify([549067334]);
+
     // Set up mock user ID that is not allowed
     ctx.message.from.id = 456;
 

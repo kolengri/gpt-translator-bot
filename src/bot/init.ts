@@ -7,7 +7,12 @@ import {onMessage} from './onMessage';
 
 export const init = async () => {
   try {
-    logger.info('Bot initialization started');
+    logger.info('Bot initialization started', {
+      meta: {
+        env: process.env.NODE_ENV,
+        allowedUserIds: JSON.parse(process.env.ALLOWED_USER_IDS ?? '[]'),
+      },
+    });
     const bot = createTelegramBotClient();
 
     onStart(bot);
