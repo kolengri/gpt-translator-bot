@@ -11,7 +11,9 @@
     "start:prod": "cross-env NODE_ENV=production ts-node -T index.ts",
     "coverage": "jest --coverage",
     "test": "jest",
-    "test:watch": "jest --watch --coverage"
+    "test:watch": "jest --watch --coverage",
+    "docker:build": "docker build -t gpt-translator-bot .",
+    "docker:run": "docker run -p 8000:8000 gpt-translator-bot"
   },
   "husky": {
     "hooks": {
