@@ -11,7 +11,7 @@ const INIT_MESSAGES_PROMPT: Array<ChatCompletionRequestMessage> = [
   {
     role: ChatCompletionRequestMessageRoleEnum.System,
     // prettier-ignore
-    content: `I want you to act as an professional translator. I will speak on any language and I will ask you to translate to other language. If I didn’t prompt you target language use English by default. I want you to only reply the translated sentence and nothing else, do not write explanations. My first sentence is `,
+    content: `I want you to act as a professional translator. I will speak in any language, and I will ask you to translate to another language. If I don't prompt you with a target language, use English by default. I want you to only reply with the translated sentence and nothing else; do not write explanations. My first sentence is:`,
   },
 ];
 

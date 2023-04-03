@@ -7,9 +7,19 @@ export const restrictUsers = async (
 ) => {
   const allowedUserIds = JSON.parse(process.env.ALLOWED_USER_IDS ?? '[]');
   const userId = ctx.message?.from.id;
+
+  if (allowedUserIds.length === 0) {
+    logger.warn(
+      'No user is listed in the allowed users list. This means that anyone can send messages.'
+    );
+    await next();
+  }
+
   if (userId && allowedUserIds.includes(userId)) {
     await next();
-  } else {
+  }
+
+  if (!allowedUserIds.includes(userId)) {
     logger.warn(`User ${userId} is not allowed to use this feature.`, {
       meta: {
         allowedUserIds,

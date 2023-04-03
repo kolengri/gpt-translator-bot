@@ -19,31 +19,34 @@ describe('restrictUsers', () => {
 
   it('should call next if user is allowed', async () => {
     process.env.ALLOWED_USER_IDS = JSON.stringify([549067334]);
-    // Set up mock user ID that is allowed
     ctx.message.from.id = 549067334;
 
-    // Call the restrictUsers function with the mock context and next function
     await restrictUsers(ctx, next);
 
-    // Assert that the next function was called
     expect(next).toHaveBeenCalled();
   });
 
   it('should reply with an error message if user is not allowed', async () => {
     process.env.ALLOWED_USER_IDS = JSON.stringify([549067334]);
 
-    // Set up mock user ID that is not allowed
     ctx.message.from.id = 456;
 
-    // Call the restrictUsers function with the mock context and next function
     await restrictUsers(ctx, next);
 
-    // Assert that the reply method was called with the error message
     expect(ctx.reply).toHaveBeenCalledWith(
       'Sorry, you do not have access to this feature.'
     );
 
-    // Assert that the next function was not called
     expect(next).not.toHaveBeenCalled();
+  });
+
+  it('should allow reply for empty ALLOWED_USER_IDS list', async () => {
+    process.env.ALLOWED_USER_IDS = JSON.stringify([]);
+
+    ctx.message.from.id = 456;
+
+    await restrictUsers(ctx, next);
+
+    expect(next).toHaveBeenCalled();
   });
 });
