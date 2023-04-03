@@ -1,4 +1,4 @@
-import {createOpenAIClient} from '@/utils/createOpenAIClient';
+import {OpenAI} from '@/OpenAI';
 import {logger} from '@/utils/logger';
 import {restrictUsers} from '@/utils/restrictUsers';
 import {
@@ -11,12 +11,13 @@ const INIT_MESSAGES_PROMPT: Array<ChatCompletionRequestMessage> = [
   {
     role: ChatCompletionRequestMessageRoleEnum.System,
     // prettier-ignore
-    content: `I want you to act as a professional translator. I will speak in any language, and I will ask you to translate to another language. If I don't prompt you with a target language, use English by default. I want you to only reply with the translated sentence and nothing else; do not write explanations. My first sentence is:`,
+    content: `I want you to act as a professional translator. I will speak in any language, and I will ask you to translate to another language. If I don't prompt you with a target language, use English by default. If I ask you to change the style of the text or add something to it, do it. If there is no such request, translate it without changes. I want you to only reply with the translated sentence and nothing else; do not write explanations. My first sentence is:`,
   },
 ];
 
 export const onMessage = (bot: BotInstance) => {
   bot.on(message('text'), restrictUsers, async (_ctx) => {
+    const ai = new OpenAI();
     const ctx = _ctx as BotOnMessageContext;
     const {text} = ctx?.message ?? {};
     if (!text) {
@@ -28,24 +29,14 @@ export const onMessage = (bot: BotInstance) => {
       meta: ctx.message,
     });
 
-    const aiClient = createOpenAIClient();
-
     logger.info('AI request started', {meta: text});
 
     try {
       bot.telegram.sendChatAction(ctx.chat.id, 'typing');
-      const completions = await aiClient.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          ...INIT_MESSAGES_PROMPT,
-          {
-            content: text,
-            role: 'user',
-          },
-        ],
-        max_tokens: 1000,
-        temperature: 0,
-        top_p: 0.1,
+      ai.setInitialMessages(INIT_MESSAGES_PROMPT);
+      const completions = await ai.complete({
+        content: text,
+        role: 'user',
       });
 
       logger.info('AI request finished', {meta: completions.data});

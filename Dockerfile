@@ -1,5 +1,5 @@
 # Use official Node.js image as base image
-FROM node:latest
+FROM node:16-alpine
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -7,7 +7,7 @@ ENV NODE_ENV=production
 # Create app directory and set it as the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json files to the container
+# Copy package.json and yarn.lock files to the container
 COPY package.json ./
 COPY yarn.lock ./
 
@@ -16,9 +16,6 @@ RUN yarn
 
 # Copy the source code to the container
 COPY . .
-
-# Expose the port that the bot listens on
-EXPOSE 8000
 
 # Start the bot using the start:prod script
 CMD ["yarn", "start:prod"]
