@@ -20,6 +20,7 @@ export const onMessage = (bot: BotInstance) => {
     const ai = new OpenAI();
     const ctx = _ctx as BotOnMessageContext;
     const {text} = ctx?.message ?? {};
+
     if (!text) {
       logger.info('Bot message received - no text', {meta: ctx.message});
       return;
@@ -29,11 +30,11 @@ export const onMessage = (bot: BotInstance) => {
       meta: ctx.message,
     });
 
-    logger.info('AI request started', {meta: text});
-
     try {
       bot.telegram.sendChatAction(ctx.chat.id, 'typing');
       ai.setInitialMessages(INIT_MESSAGES_PROMPT);
+
+      logger.info('AI request started', {meta: text});
       const completions = await ai.complete({
         content: text,
         role: 'user',
@@ -41,6 +42,7 @@ export const onMessage = (bot: BotInstance) => {
 
       logger.info('AI request finished', {meta: completions.data});
       const message = completions.data.choices[0].message;
+
       if (!message) {
         logger.info('AI request failed - no text in response', {
           meta: completions.data,
@@ -48,11 +50,11 @@ export const onMessage = (bot: BotInstance) => {
         return;
       }
 
+      logger.info('AI request finished successfully');
       await ctx.reply(message.content);
+      logger.info('Bot message sent', {meta: message.content});
     } catch (error) {
       logger.info('AI request failed -', error);
-    } finally {
-      logger.info('AI request finished');
     }
   });
 };
