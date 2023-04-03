@@ -1,9 +1,8 @@
 import {logger} from '@/utils/logger';
-import {message} from 'telegraf/filters';
-import {createTelegramBotClient} from '@/utils/createTelegramBotClient';
 import {onStart} from './onStart';
 import {onQuit} from './onQuit';
 import {onMessage} from './onMessage';
+import {Telegram} from '@/Telegram/Telegram';
 
 export const init = async () => {
   try {
@@ -13,20 +12,25 @@ export const init = async () => {
         allowedUserIds: JSON.parse(process.env.ALLOWED_USER_IDS ?? '[]'),
       },
     });
-    const bot = createTelegramBotClient();
 
-    onStart(bot);
+    const bot = new Telegram();
 
-    onQuit(bot);
+    bot.onStart(onStart);
+    bot.onQuit(onQuit);
+    bot.onMessage(onMessage);
 
-    onMessage(bot);
-
-    bot.launch();
+    bot.start();
 
     logger.info('Bot initialization finished successfully');
     // Enable graceful stop
-    process.once('SIGINT', () => bot.stop('SIGINT'));
-    process.once('SIGTERM', () => bot.stop('SIGTERM'));
+    process.once('SIGINT', (e) => {
+      logger.error('SIGINT', e);
+      bot.stop('SIGINT');
+    });
+    process.once('SIGTERM', (e) => {
+      logger.error('SIGTERM', e);
+      bot.stop('SIGTERM');
+    });
   } catch (error) {
     logger.info('Bot initialization failed -', error);
   }

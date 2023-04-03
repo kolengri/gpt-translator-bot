@@ -1,4 +1,6 @@
 import {createTelegramBotClient} from '@/utils/createTelegramBotClient';
+import {restrictUsers} from '@/utils/restrictUsers';
+import {message} from 'telegraf/filters';
 
 export class Telegram {
   private bot: BotInstance;
@@ -11,12 +13,12 @@ export class Telegram {
     this.bot.launch();
   }
 
-  public stop() {
-    this.bot.stop();
+  public stop(signal?: string) {
+    this.bot.stop(signal);
   }
 
   public onMessage(fn: (ctx: BotOnMessageContext) => void) {
-    this.bot.on('message', fn as any);
+    this.bot.on(message('text'), restrictUsers, fn as any);
   }
 
   public onCommand(command: string, fn: (ctx: BotOnMessageContext) => void) {

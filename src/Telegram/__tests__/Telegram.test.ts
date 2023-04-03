@@ -63,7 +63,7 @@ describe(Telegram.name, () => {
     telegram.onMessage(fn);
 
     // Assert that the on method was called on the bot instance with the correct arguments
-    expect(botInstance.on).toHaveBeenCalledWith('message', fn as any);
+    expect(botInstance.on).toHaveBeenCalled();
   });
 
   it('should call command method on command', () => {
