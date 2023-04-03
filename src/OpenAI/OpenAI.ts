@@ -1,20 +1,14 @@
-import {ChatCompletionRequestMessage, Configuration, OpenAIApi} from 'openai';
+import {createOpenAIClient} from '@/utils/createOpenAIClient';
+import {ChatCompletionRequestMessage, OpenAIApi} from 'openai';
 
 export class OpenAI {
   private api: OpenAIApi;
   private initialMessages: ChatCompletionRequestMessage[] = [];
 
-  constructor(args: {
-    apiKey?: string;
-    initialMessages?: ChatCompletionRequestMessage[];
-  }) {
-    const {apiKey = process.env.OPENAI_API_KEY, initialMessages} = args;
-
-    if (!apiKey)
-      throw new Error('OPENAI_API_KEY is not defined in process.env.');
-
+  constructor(args?: {initialMessages?: ChatCompletionRequestMessage[]}) {
+    const {initialMessages} = args ?? {};
     if (initialMessages) this.initialMessages = initialMessages;
-    this.api = new OpenAIApi(new Configuration({apiKey}));
+    this.api = createOpenAIClient();
   }
 
   public setInitialMessages(messages: ChatCompletionRequestMessage[]) {

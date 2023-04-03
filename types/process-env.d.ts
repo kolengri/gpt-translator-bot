@@ -1,4 +1,5 @@
 import {Context, NarrowedContext, Telegraf, Update} from 'telegraf';
+import {Message} from 'telegraf/types';
 
 declare global {
   namespace NodeJS {
@@ -13,9 +14,7 @@ declare global {
   type BotInstance = Telegraf<Context<Update>>;
   type BotOnMessageContext = NarrowedContext<
     Context<Update>,
-    Update.MessageUpdate<
-      Record<'text', {}> & Message.TextMessage & AddOptionalKeys<never>
-    >
+    Update.MessageUpdate<Message>
   >;
 }
 
