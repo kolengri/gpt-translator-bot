@@ -22,23 +22,23 @@ export class Telegram {
   }
 
   public onCommand(command: string, fn: (ctx: BotOnMessageContext) => void) {
-    this.bot.command(command, fn as any);
+    this.bot.command(command, restrictUsers, fn as any);
   }
 
   public onAction(action: string, fn: (ctx: BotOnMessageContext) => void) {
-    this.bot.action(action, fn as any);
+    this.bot.action(action, restrictUsers, fn as any);
   }
 
   public onStart(fn: (ctx: BotOnMessageContext) => void) {
-    this.bot.start(fn as any);
+    this.bot.start(restrictUsers, fn as any);
   }
 
   public onQuit(fn: (ctx: BotOnMessageContext) => void) {
-    this.bot.command('quit', fn as any);
+    this.onCommand('quit', fn);
   }
 
   public onHelp(fn: (ctx: BotOnMessageContext) => void) {
-    this.bot.command('help', fn as any);
+    this.onCommand('help', fn);
   }
 
   public getBotInstance() {

@@ -1,11 +1,9 @@
 import {OpenAI} from '@/OpenAI';
 import {logger} from '@/utils/logger';
-import {restrictUsers} from '@/utils/restrictUsers';
 import {
   ChatCompletionRequestMessage,
   ChatCompletionRequestMessageRoleEnum,
 } from 'openai';
-import {message} from 'telegraf/filters';
 
 const INIT_MESSAGES_PROMPT: Array<ChatCompletionRequestMessage> = [
   {
