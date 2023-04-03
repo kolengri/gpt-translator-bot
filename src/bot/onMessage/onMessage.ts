@@ -17,7 +17,9 @@ const INIT_MESSAGES_PROMPT: Array<ChatCompletionRequestMessage> = [
 
 export const onMessage = (bot: BotInstance) => {
   bot.on(message('text'), restrictUsers, async (_ctx) => {
-    const ai = new OpenAI();
+    const ai = new OpenAI({
+      initialMessages: INIT_MESSAGES_PROMPT,
+    });
     const ctx = _ctx as BotOnMessageContext;
     const {text} = ctx?.message ?? {};
 
@@ -32,7 +34,6 @@ export const onMessage = (bot: BotInstance) => {
 
     try {
       bot.telegram.sendChatAction(ctx.chat.id, 'typing');
-      ai.setInitialMessages(INIT_MESSAGES_PROMPT);
 
       logger.info('AI request started', {meta: text});
       const completions = await ai.complete({

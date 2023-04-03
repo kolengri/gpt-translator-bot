@@ -4,10 +4,16 @@ export class OpenAI {
   private api: OpenAIApi;
   private initialMessages: ChatCompletionRequestMessage[] = [];
 
-  constructor(apiKey = process.env.OPENAI_API_KEY) {
+  constructor(args: {
+    apiKey?: string;
+    initialMessages?: ChatCompletionRequestMessage[];
+  }) {
+    const {apiKey = process.env.OPENAI_API_KEY, initialMessages} = args;
+
     if (!apiKey)
       throw new Error('OPENAI_API_KEY is not defined in process.env.');
 
+    if (initialMessages) this.initialMessages = initialMessages;
     this.api = new OpenAIApi(new Configuration({apiKey}));
   }
 
