@@ -23,7 +23,7 @@ export class OpenAI {
 
   public async complete(
     message: ChatCompletionRequestMessage,
-    maxTokens: number = 64
+    maxTokens: number = 1000
   ) {
     const completions = await this.api.createChatCompletion({
       model: 'gpt-3.5-turbo',
