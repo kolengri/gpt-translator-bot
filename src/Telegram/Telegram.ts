@@ -1,4 +1,5 @@
 import {createTelegramBotClient} from '@/utils/createTelegramBotClient';
+import {logger} from '@/utils/logger';
 import {restrictUsers} from '@/utils/restrictUsers';
 import {message} from 'telegraf/filters';
 
@@ -7,6 +8,8 @@ export class Telegram {
 
   constructor() {
     this.bot = createTelegramBotClient();
+
+    this.enableGracefulShutdown();
   }
 
   public start() {
@@ -21,11 +24,17 @@ export class Telegram {
     this.bot.on(message('text'), restrictUsers, fn as any);
   }
 
-  public onCommand(command: string, fn: (ctx: BotOnMessageContext) => void) {
+  public onCommand(
+    command: string | RegExp,
+    fn: (ctx: BotOnMessageContext) => void
+  ) {
     this.bot.command(command, restrictUsers, fn as any);
   }
 
-  public onAction(action: string, fn: (ctx: BotOnMessageContext) => void) {
+  public onAction(
+    action: string | RegExp,
+    fn: (ctx: BotOnMessageContext) => void
+  ) {
     this.bot.action(action, restrictUsers, fn as any);
   }
 
@@ -41,7 +50,24 @@ export class Telegram {
     this.onCommand('help', fn);
   }
 
+  public onSettings(fn: (ctx: BotOnMessageContext) => void) {
+    this.bot.settings(restrictUsers, fn as any);
+  }
+
   public getBotInstance() {
     return this.bot;
+  }
+
+  private enableGracefulShutdown() {
+    const bot = this.getBotInstance();
+    // Enable graceful stop
+    process.once('SIGINT', (e) => {
+      logger.error('SIGINT', e);
+      bot.stop('SIGINT');
+    });
+    process.once('SIGTERM', (e) => {
+      logger.error('SIGTERM', e);
+      bot.stop('SIGTERM');
+    });
   }
 }

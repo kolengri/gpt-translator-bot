@@ -3,6 +3,7 @@ import {onStart} from './onStart';
 import {onQuit} from './onQuit';
 import {onMessage} from './onMessage';
 import {Telegram} from '@/Telegram/Telegram';
+import {onSetLanguage} from './onSetLanguage';
 
 export const init = async () => {
   try {
@@ -22,15 +23,6 @@ export const init = async () => {
     bot.start();
 
     logger.info('Bot initialization finished successfully');
-    // Enable graceful stop
-    process.once('SIGINT', (e) => {
-      logger.error('SIGINT', e);
-      bot.stop('SIGINT');
-    });
-    process.once('SIGTERM', (e) => {
-      logger.error('SIGTERM', e);
-      bot.stop('SIGTERM');
-    });
   } catch (error) {
     logger.info('Bot initialization failed -', error);
   }
