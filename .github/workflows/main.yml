@@ -75,4 +75,4 @@ jobs:
               docker rm gpt-translator-bot || true
               docker run -d --name gpt-translator-bot gpt-translator-bot
             '
-        ssh_known_hosts: ${{ secrets.SERVER_IP }}, ${{ secrets.SERVER_HOSTKEY }}
+          ssh_known_hosts: ${{ secrets.SERVER_IP }}, ${{ secrets.SERVER_HOSTKEY }}
