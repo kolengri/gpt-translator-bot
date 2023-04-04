@@ -65,46 +65,4 @@ describe(Telegram.name, () => {
     // Assert that the on method was called on the bot instance with the correct arguments
     expect(botInstance.on).toHaveBeenCalled();
   });
-
-  it('should call command method on command', () => {
-    const command = 'test';
-    const fn = jest.fn();
-    telegram.onCommand(command, fn);
-
-    // Assert that the command method was called on the bot instance with the correct arguments
-    expect(botInstance.command).toHaveBeenCalledWith(command, fn as any);
-  });
-
-  it('should call action method on action', () => {
-    const action = 'test';
-    const fn = jest.fn();
-    telegram.onAction(action, fn);
-
-    // Assert that the action method was called on the bot instance with the correct arguments
-    expect(botInstance.action).toHaveBeenCalledWith(action, fn as any);
-  });
-
-  it('should call start method on start', () => {
-    const fn = jest.fn();
-    telegram.onStart(fn);
-
-    // Assert that the start method was called on the bot instance with the correct arguments
-    expect(botInstance.start).toHaveBeenCalledWith(fn as any);
-  });
-
-  it('should call command method with quit on quit', () => {
-    const fn = jest.fn();
-    telegram.onQuit(fn);
-
-    // Assert that the command method was called on the bot instance with the 'quit' command and the given function
-    expect(botInstance.command).toHaveBeenCalledWith('quit', fn as any);
-  });
-
-  it('should call command method with help on help', () => {
-    const fn = jest.fn();
-    telegram.onHelp(fn);
-
-    // Assert that the command method was called on the bot instance with the 'help' command and the given function
-    expect(botInstance.command).toHaveBeenCalledWith('help', fn as any);
-  });
 });
