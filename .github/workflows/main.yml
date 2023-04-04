@@ -68,7 +68,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             mkdir -p ~/gpt-translator-bot
-            scp -r gpt-translator-bot.tar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:~
+            scp -r gpt-translator-bot.tar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:~/gpt-translator-bot
             ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} '
               cd ~/gpt-translator-bot
               docker load -i gpt-translator-bot.tar
