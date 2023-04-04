@@ -27,3 +27,31 @@ jobs:
 
       - name: Test
         run: yarn test --ci --coverage --maxWorkers=2
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Docker image
+        run: docker build -t gpt-translator-bot .
+
+      - name: Save Docker image as tar file
+        run: docker save -o gpt-translator-bot.tar gpt-translator-bot
+
+      - name: Deploy app to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker load -i gpt-translator-bot.tar
+            docker stop gpt-translator-bot || true
+            docker rm gpt-translator-bot || true
+            docker run -d --name gpt-translator-bot
