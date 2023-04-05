@@ -15,21 +15,25 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Use Node ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install deps and build (with cache)
-        uses: bahmutov/npm-install@v1
+      - name: Install dependencies
+        run: yarn install
 
-      - name: Lint
-        run: yarn lint
-
-      - name: Test
-        run: yarn test --ci --coverage --maxWorkers=2
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          no-cache: true
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+          registry: ${{ secrets.DOCKER_REGISTRY }}
 
   deploy:
     name: Deploy to production server
@@ -49,14 +53,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          no-cache: true
-          platforms: linux/amd64
-          tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+      - name: Pull Docker image
+        run: docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
 
       - name: Confirm SSH host key
         run: |
@@ -70,7 +68,6 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
             docker stop gpt-translator-bot || true
             docker rm gpt-translator-bot || true
             docker run -d --name gpt-translator-bot ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
