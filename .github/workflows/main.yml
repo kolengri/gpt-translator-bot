@@ -49,11 +49,14 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Build Docker image
-        run: docker build -t gpt-translator-bot .
-
-      - name: Save Docker image as tar file
-        run: docker save -o gpt-translator-bot.tar gpt-translator-bot
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          no-cache: true
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
 
       - name: Confirm SSH host key
         run: |
@@ -67,13 +70,8 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p ~/gpt-translator-bot
-            scp gpt-translator-bot.tar ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:~/gpt-translator-bot/
-            ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} '
-              cd ~/gpt-translator-bot
-              docker load -i gpt-translator-bot.tar
-              docker stop gpt-translator-bot || true
-              docker rm gpt-translator-bot || true
-              docker run -d --name gpt-translator-bot gpt-translator-bot
-            '
+            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+            docker stop gpt-translator-bot || true
+            docker rm gpt-translator-bot || true
+            docker run -d --name gpt-translator-bot ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
           ssh_known_hosts: ${{ secrets.SERVER_IP }}, ${{ secrets.SERVER_HOSTKEY }}
