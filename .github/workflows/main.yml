@@ -35,9 +35,10 @@ jobs:
           tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
           secrets: |
             DOCKER_USERNAME=${{ secrets.DOCKER_REGISTRY_USERNAME }}
-            DOCKER_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }}  deploy:
-    name: Deploy to production server
+            DOCKER_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
+  deploy:
+    name: Deploy to production server
     runs-on: ubuntu-latest
 
     steps:
