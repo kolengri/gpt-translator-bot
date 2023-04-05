@@ -63,7 +63,7 @@ jobs:
           ssh-keygen -lf known_hosts
 
       - name: Deploy app to server
-        uses: invi5H/ssh-action@v2
+        uses: invi5H/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
