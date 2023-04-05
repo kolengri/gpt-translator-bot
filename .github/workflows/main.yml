@@ -32,7 +32,7 @@ jobs:
           push: true
           no-cache: true
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+          tags: ${{ secrets.DOCKER_REGISTRY }}/v2/gpt-translator-bot:${{ github.sha }}
           registry: ${{ secrets.DOCKER_REGISTRY }}
 
   deploy:
