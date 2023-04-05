@@ -1,12 +1,13 @@
 name: CI
+
 on:
   push:
     branches:
       - master
+
 jobs:
   build:
     name: Build, lint, and test on Node ${{ matrix.node }} and ${{ matrix.os }}
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -25,6 +26,13 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Login to Docker registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
@@ -33,6 +41,9 @@ jobs:
           no-cache: true
           platforms: linux/amd64
           tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+          secrets: |
+            DOCKER_USERNAME=${{ secrets.DOCKER_REGISTRY_USERNAME }}
+            DOCKER_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
   deploy:
     name: Deploy to production server
@@ -71,4 +82,4 @@ jobs:
             docker stop gpt-translator-bot || true
             docker rm gpt-translator-bot || true
             docker run -d --name gpt-translator-bot ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
-          ssh_known_hosts: ${{ secrets.SERVER_IP }}, ${{ secrets.SERVER_HOSTKEY }}
+          ssh_known_hosts: ${{ secrets.SERVER_IP }}, ${{ secrets.SERVER_HOSTKEY }}}
