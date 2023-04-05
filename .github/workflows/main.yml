@@ -32,10 +32,10 @@ jobs:
           push: true
           no-cache: true
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKER_REGISTRY }}/v2/gpt-translator-bot:${{ github.sha }}
-          registry: ${{ secrets.DOCKER_REGISTRY }}
-
-  deploy:
+          tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+          secrets: |
+            DOCKER_USERNAME=${{ secrets.DOCKER_REGISTRY_USERNAME }}
+            DOCKER_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }}  deploy:
     name: Deploy to production server
 
     runs-on: ubuntu-latest
@@ -62,12 +62,13 @@ jobs:
           ssh-keygen -lf known_hosts
 
       - name: Deploy app to server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
             docker stop gpt-translator-bot || true
             docker rm gpt-translator-bot || true
             docker run -d --name gpt-translator-bot ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
