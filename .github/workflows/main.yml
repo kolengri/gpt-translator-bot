@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_TAG: gpt-translator-bot:${{ github.sha }}
+      IMAGE_TAG: deploy/gpt-translator-bot:${{ github.sha }}
 
     steps:
       - name: Checkout repository
