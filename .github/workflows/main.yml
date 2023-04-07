@@ -42,7 +42,7 @@ jobs:
           platforms: linux/amd64
           tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
           secrets: |
-            DOCKER_CONFIG=${{ github.workspace }}/.docker
+            DOCKER_CONFIG=${{ secrets.DOCKER_CONFIG }}
             DOCKER_USERNAME=${{ secrets.DOCKER_REGISTRY_USERNAME }}
             DOCKER_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
