@@ -26,8 +26,8 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-   
-        - name: Create meta
+
+      - name: Create meta
         id: meta
         uses: docker/metadata-action@v4
         with:
