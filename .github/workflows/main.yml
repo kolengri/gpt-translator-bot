@@ -25,7 +25,6 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
-        needs: checkout
         run: yarn install
 
       - name: Login to Docker registry
@@ -37,7 +36,6 @@ jobs:
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Build and push Docker image
-        needs: login
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: repo/image
@@ -46,6 +44,7 @@ jobs:
           dockerfile: Dockerfile
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
   deploy:
     name: Deploy to production server
     runs-on: ubuntu-latest
