@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Use Node ${{ matrix.node }}
         uses: actions/setup-node@v1
@@ -43,16 +43,15 @@ jobs:
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
+        uses: mr-smithers-excellent/docker-build-push@v6
         with:
-          context: .
-          push: true
-          no-cache: true
+          image: repo/image
+          tags: ${{ steps.meta.outputs.tags }}
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+          dockerfile: Dockerfile
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ steps.meta.outputs.tags }}
-          secrets: |
-            DOCKER_USERNAME=${{ secrets.DOCKER_REGISTRY_USERNAME }}
-            DOCKER_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
   deploy:
     name: Deploy to production server
