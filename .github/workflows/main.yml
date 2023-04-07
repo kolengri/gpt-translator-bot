@@ -35,11 +35,20 @@ jobs:
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
+      - name: Create meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot
+          tags: |
+            {{sha}}
+
       - name: Build and push Docker image
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: repo/image
-          tags: gpt-translator-bot:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           registry: ${{ secrets.DOCKER_REGISTRY }}
           dockerfile: Dockerfile
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
