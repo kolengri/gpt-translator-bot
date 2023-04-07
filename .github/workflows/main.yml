@@ -30,6 +30,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
+          images: |
+            name/app
           tags: |
             {{sha}}
 
