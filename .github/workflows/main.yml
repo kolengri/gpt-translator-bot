@@ -16,6 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repo
+        id: checkout
         uses: actions/checkout@v2
 
       - name: Use Node ${{ matrix.node }}
@@ -24,9 +25,11 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install dependencies
+        needs: checkout
         run: yarn install
 
       - name: Login to Docker registry
+        id: login
         uses: docker/login-action@v1
         with:
           registry: ${{ secrets.DOCKER_REGISTRY }}
@@ -34,6 +37,7 @@ jobs:
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Build and push Docker image
+        needs: login
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: repo/image
