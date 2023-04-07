@@ -1,4 +1,4 @@
-name: Node.js CI/CD
+name: Build and deploy
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:latest
+          tags: gpt-translator-bot:{{ github.sha }}
           build-args: |
             NODE_ENV=production
 
@@ -42,5 +42,5 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:latest
-            docker run -d ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:latest
+            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:{{ github.sha }}
+            docker run -d ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:{{ github.sha }}
