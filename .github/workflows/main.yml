@@ -32,15 +32,15 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
+        secrets:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
         with:
           context: .
           push: true
           tags: ${{ env.IMAGE_TAG }}
           build-args: |
             NODE_ENV=production
-        secrets:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
       - name: Deploy to server
         uses: invi5H/ssh-action@v1
