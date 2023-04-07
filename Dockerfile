@@ -13,7 +13,6 @@ COPY yarn.lock ./
 
 # Install dependencies
 RUN yarn
-
 # Copy the source code to the container
 COPY . .
 
