@@ -1,42 +1,25 @@
-name: CI
+name: Node.js CI/CD
+
 on:
   push:
-    branches:
-      - master
-    workflow_dispatch: # allow manual triggering
+    branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
   build:
-    name: Build, lint, and test on Node ${{ matrix.node }} and ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node: ['16.x']
-        os: [ubuntu-latest]
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        id: checkout
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Use Node ${{ matrix.node }}
-        uses: actions/setup-node@v1
+      - name: Install Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node }}
+          node-version: '16.x'
 
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Create meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot
-          tags: |
-            ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:{{ sha }}
-
-      - name: Login to Docker registry
-        id: login
+      - name: Log in to Docker registry
         uses: docker/login-action@v1
         with:
           registry: ${{ secrets.DOCKER_REGISTRY }}
@@ -48,42 +31,16 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:latest
+          build-args: |
+            NODE_ENV=production
 
-  deploy:
-    name: Deploy to production server
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Create .env file
-        run: |
-          echo 'TELEGRAM_BOT_TOKEN="${{ secrets.ENV_TELEGRAM_BOT_TOKEN }}"' > .env
-          echo 'OPENAI_API_KEY="${{ secrets.ENV_OPENAI_API_KEY }}"' >> .env
-          echo 'ALLOWED_USER_IDS="${{ secrets.ENV_ALLOWED_USER_IDS }}"' >> .env
-
-      - name: Pull Docker image
-        run: docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ steps.meta.outputs.tags }}
-
-      - name: Confirm SSH host key
-        run: |
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> known_hosts
-          ssh-keygen -lf known_hosts
-
-      - name: Deploy app to server
+      - name: Deploy to server
         uses: invi5H/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ steps.meta.outputs.tags }}
-            docker stop gpt-translator-bot || true
-            docker rm gpt-translator-bot || true
-            docker run -d --name gpt-translator-bot ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ steps.meta.outputs.tags }}
-          ssh_known_hosts: ${{ secrets.SERVER_IP }}, ${{ secrets.SERVER_HOSTKEY }}}
+            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:latest
+            docker run -d ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:latest
