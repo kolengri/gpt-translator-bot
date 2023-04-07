@@ -33,7 +33,7 @@ jobs:
         with:
           images: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot
           tags: |
-            type=sha,enable=true,priority=100,prefix=sha-,suffix=,format=short
+            ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ sha }}
 
       - name: Login to Docker registry
         id: login
