@@ -26,6 +26,14 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+   
+        - name: Create meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot
+          tags: |
+            type=sha,enable=true,priority=100,prefix=sha-,suffix=,format=short
 
       - name: Login to Docker registry
         id: login
@@ -35,14 +43,6 @@ jobs:
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
-      - name: Create meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot
-          tags: |
-            {{sha}}
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -51,9 +51,6 @@ jobs:
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          registry: ${{ secrets.DOCKER_REGISTRY }}
-          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
   deploy:
     name: Deploy to production server
@@ -70,11 +67,8 @@ jobs:
           echo 'OPENAI_API_KEY="${{ secrets.ENV_OPENAI_API_KEY }}"' >> .env
           echo 'ALLOWED_USER_IDS="${{ secrets.ENV_ALLOWED_USER_IDS }}"' >> .env
 
-      - name: Install dependencies
-        run: yarn install
-
       - name: Pull Docker image
-        run: docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+        run: docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ steps.meta.outputs.tags }}
 
       - name: Confirm SSH host key
         run: |
@@ -88,8 +82,8 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+            docker pull ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ steps.meta.outputs.tags }}
             docker stop gpt-translator-bot || true
             docker rm gpt-translator-bot || true
-            docker run -d --name gpt-translator-bot ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ github.sha }}
+            docker run -d --name gpt-translator-bot ${{ secrets.DOCKER_REGISTRY }}/gpt-translator-bot:${{ steps.meta.outputs.tags }}
           ssh_known_hosts: ${{ secrets.SERVER_IP }}, ${{ secrets.SERVER_HOSTKEY }}}
