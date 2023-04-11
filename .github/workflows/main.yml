@@ -11,6 +11,7 @@ env:
   ENV_OPENAI_API_KEY: ${{ secrets.ENV_OPENAI_API_KEY }}
   ENV_ALLOWED_USER_IDS: ${{ secrets.ENV_ALLOWED_USER_IDS }}
   IMAGE_TAG: ${{ secrets.DOCKER_USERNAME }}/gpt-translator-bot:latest
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -25,15 +26,18 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v1
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile # Add this line to explicitly specify the Dockerfile path
+          file: ./Dockerfile
           push: true
           tags: ${{ env.IMAGE_TAG }}
+          builder: mybuilder
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          load: true
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
