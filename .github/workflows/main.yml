@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 env:
   ENV_TELEGRAM_BOT_TOKEN: ${{ secrets.ENV_TELEGRAM_BOT_TOKEN }}
