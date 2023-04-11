@@ -45,7 +45,7 @@ jobs:
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            ls -l /home/${{ secrets.SERVER_USERNAME }}/gpt-translator-bot
-            cd /home/${{ secrets.SERVER_USERNAME }}/gpt-translator-bot
-            docker-compose pull
-            docker-compose up -d
+            docker stop gpt-translator-bot || true
+            docker rm gpt-translator-bot || true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/gpt-translator-bot:latest
+            docker run -d --restart always --name gpt-translator-bot -e ENV_TELEGRAM_BOT_TOKEN=${{ secrets.ENV_TELEGRAM_BOT_TOKEN }} -e ENV_OPENAI_API_KEY=${{ secrets.ENV_OPENAI_API_KEY }} -e ENV_ALLOWED_USER_IDS=${{ secrets.ENV_ALLOWED_USER_IDS }} ${{ secrets.DOCKER_USERNAME }}/gpt-translator-bot:latest
