@@ -29,7 +29,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: username/repo:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/gpt-translator-bot:latest
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
@@ -44,6 +44,6 @@ jobs:
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/${{ secrets.SERVER_USERNAME }}/gpt-translator
+            cd /home/${{ secrets.SERVER_USERNAME }}/gpt-translator-bot
             docker-compose pull
             docker-compose up -d
