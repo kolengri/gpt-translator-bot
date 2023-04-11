@@ -6,45 +6,39 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  ENV_TELEGRAM_BOT_TOKEN: ${{ secrets.ENV_TELEGRAM_BOT_TOKEN }}
+  ENV_OPENAI_API_KEY: ${{ secrets.ENV_OPENAI_API_KEY }}
+  ENV_ALLOWED_USER_IDS: ${{ secrets.ENV_ALLOWED_USER_IDS }}
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
-    env:
-      IMAGE_TAG: ${{ secrets.DOCKER_REGISTRY_USERNAME }}/${{ secrets.DOCKER_REGISTRY_USERNAME }}/gpt-translator-bot:${{ github.sha }}
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Log in to Docker registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ secrets.DOCKER_REGISTRY }}
-          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-
-      - name: Create .env file
-        run: |
-          echo 'TELEGRAM_BOT_TOKEN="${{ secrets.ENV_TELEGRAM_BOT_TOKEN }}"' > .env
-          echo 'OPENAI_API_KEY="${{ secrets.ENV_OPENAI_API_KEY }}"' >> .env
-          echo 'ALLOWED_USER_IDS="${{ secrets.ENV_ALLOWED_USER_IDS }}"' >> .env
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
-          tags: ${{ env.IMAGE_TAG }}
-          build-args: |
-            NODE_ENV=production
+          push: false
+          tags: gpt-translator-bot:latest
 
-      - name: Deploy to server
-        uses: invi5H/ssh-action@v1
+      - name: SSH into server and deploy
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_REGISTRY }}/${{ env.IMAGE_TAG }}
-            docker run -d ${{ secrets.DOCKER_REGISTRY }}/${{ env.IMAGE_TAG }}
+            docker stop gpt-translator-bot || true
+            docker rm gpt-translator-bot || true
+            docker rmi gpt-translator-bot || true
+            docker pull gpt-translator-bot:latest
+            docker run -d --restart=always --name=gpt-translator-bot \
+              -e TELEGRAM_BOT_TOKEN=${{ secrets.ENV_TELEGRAM_BOT_TOKEN }} \
+              -e OPENAI_API_KEY=${{ secrets.ENV_OPENAI_API_KEY }} \
+              -e ALLOWED_USER_IDS=${{ secrets.ENV_ALLOWED_USER_IDS }} \
+              gpt-translator-bot:latest
