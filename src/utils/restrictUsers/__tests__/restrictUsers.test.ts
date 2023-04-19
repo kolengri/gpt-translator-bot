@@ -18,8 +18,8 @@ describe('restrictUsers', () => {
   });
 
   it('should call next if user is allowed', async () => {
-    process.env.ALLOWED_USER_IDS = JSON.stringify([549067334]);
-    ctx.message.from.id = 549067334;
+    process.env.ALLOWED_USER_IDS = JSON.stringify([323223]);
+    ctx.message.from.id = 323223;
 
     await restrictUsers(ctx, next);
 
@@ -27,7 +27,7 @@ describe('restrictUsers', () => {
   });
 
   it('should reply with an error message if user is not allowed', async () => {
-    process.env.ALLOWED_USER_IDS = JSON.stringify([549067334]);
+    process.env.ALLOWED_USER_IDS = JSON.stringify([323223]);
 
     ctx.message.from.id = 456;
 
