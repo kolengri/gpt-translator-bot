@@ -1,22 +1,33 @@
 import {Context} from 'telegraf';
 import {logger} from '../logger';
+import {isNumericString} from '../type-guards';
 
 export const restrictUsers = async (
   ctx: Context,
   next: () => Promise<void>
 ) => {
-  const allowedUserIds = JSON.parse(process.env.ALLOWED_USER_IDS ?? '[]');
+  const allowedUserIds =
+    process.env.ALLOWED_USER_IDS?.split(',')
+      .map((s) => s.replace(' ', ''))
+      .filter(isNumericString)
+      .map((p) => parseInt(p)) ?? [];
+
   const userId = ctx.message?.from.id;
+
+  if (!userId) {
+    logger.warn('No user id found in the message. No answer will be sent.');
+    return;
+  }
 
   if (allowedUserIds.length === 0) {
     logger.warn(
       'No user is listed in the allowed users list. This means that anyone can send messages.'
     );
-    await next();
+    return await next();
   }
 
-  if (userId && allowedUserIds.includes(userId)) {
-    await next();
+  if (allowedUserIds.includes(userId)) {
+    return await next();
   }
 
   if (!allowedUserIds.includes(userId)) {
@@ -25,6 +36,7 @@ export const restrictUsers = async (
         allowedUserIds,
       },
     });
-    await ctx.reply('Sorry, you do not have access to this feature.');
+
+    return await ctx.reply('Sorry, you do not have access to this feature.');
   }
 };

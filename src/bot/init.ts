@@ -9,7 +9,7 @@ export const init = async () => {
     logger.info('Bot initialization started', {
       meta: {
         env: process.env.NODE_ENV,
-        allowedUserIds: JSON.parse(process.env.ALLOWED_USER_IDS ?? '[]'),
+        allowedUserIds: process.env.ALLOWED_USER_IDS,
       },
     });
 
