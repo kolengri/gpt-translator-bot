@@ -23,6 +23,6 @@ export const init = async () => {
 
     logger.info('Bot initialization finished successfully');
   } catch (error) {
-    logger.info('Bot initialization failed -', error);
+    logger.error('Bot initialization failed -', error);
   }
 };
