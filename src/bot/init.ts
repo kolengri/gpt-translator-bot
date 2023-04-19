@@ -3,7 +3,6 @@ import {onStart} from './onStart';
 import {onQuit} from './onQuit';
 import {onMessage} from './onMessage';
 import {Telegram} from '@/Telegram/Telegram';
-import {onSetLanguage} from './onSetLanguage';
 
 export const init = async () => {
   try {
