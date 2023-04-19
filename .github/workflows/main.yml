@@ -68,4 +68,4 @@ jobs:
               -e TELEGRAM_BOT_TOKEN=${{ secrets.ENV_TELEGRAM_BOT_TOKEN }} \
               -e OPENAI_API_KEY=${{ secrets.ENV_OPENAI_API_KEY }} \
               -e ALLOWED_USER_IDS=${{ secrets.ENV_ALLOWED_USER_IDS }} \
-              gpt-translator-bot
+              ${{ secrets.DOCKER_USERNAME }}/gpt-translator-bot
