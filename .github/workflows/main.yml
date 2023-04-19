@@ -28,8 +28,6 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
-        with:
-          driver-options: network=host
 
       - name: Build and push Docker image
         id: docker_build
@@ -59,9 +57,8 @@ jobs:
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            echo ${{ secrets.DOCKER_PASSWORD }} | docker login --username ${{ secrets.DOCKER_USERNAME }} --password-stdin
             docker stop gpt-translator-bot || true
             docker rm gpt-translator-bot || true
             docker pull ${{ env.IMAGE_TAG }}
-            echo ${{ env.IMAGE_TAG }}
             docker run -d --restart always --name gpt-translator-bot -e TELEGRAM_BOT_TOKEN=${{ secrets.ENV_TELEGRAM_BOT_TOKEN }} -e OPENAI_API_KEY=${{ secrets.ENV_OPENAI_API_KEY }} -e ALLOWED_USER_IDS=${{ secrets.ENV_ALLOWED_USER_IDS }} ${{ env.IMAGE_TAG }}
