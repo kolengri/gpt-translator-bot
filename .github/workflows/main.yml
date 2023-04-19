@@ -63,4 +63,9 @@ jobs:
             docker rm gpt-translator-bot || true
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker pull ${{ env.IMAGE_TAG }}
-            docker run -d --restart always --name gpt-translator-bot -e TELEGRAM_BOT_TOKEN=${{ secrets.ENV_TELEGRAM_BOT_TOKEN }} -e OPENAI_API_KEY=${{ secrets.ENV_OPENAI_API_KEY }} -e ALLOWED_USER_IDS=${{ secrets.ENV_ALLOWED_USER_IDS }}
+            docker run -d --restart always \
+              --name gpt-translator-bot \
+              -e TELEGRAM_BOT_TOKEN=${{ secrets.ENV_TELEGRAM_BOT_TOKEN }} \
+              -e OPENAI_API_KEY=${{ secrets.ENV_OPENAI_API_KEY }} \
+              -e ALLOWED_USER_IDS=${{ secrets.ENV_ALLOWED_USER_IDS }} \
+              ${{ env.IMAGE_TAG }}
